@@ -13,7 +13,7 @@ import (
 
 var validate *validator.Validate
 
-func Run() {
+func setupRouter() *gin.Engine {
 	router := gin.Default()
 	router.Use(
 		middlewares.ErrorHandler(
@@ -24,10 +24,14 @@ func Run() {
 			},
 		),
 	)
-	validate = validator.New()
 	CreateUserRoutes(router)
-	CreateSessionsRoutes(router)
+	CreateSessionRoutes(router)
+	return router
+}
 
+func Run() {
+	validate = validator.New()
+	router := setupRouter()
 	port := fmt.Sprintf(":%s", os.Getenv("PORT"))
 	log.Printf("Listening on port %s", port)
 	router.Run(port)

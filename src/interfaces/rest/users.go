@@ -31,7 +31,6 @@ type UpdateAddressData struct {
 
 type UpdateUserData struct {
 	Name      string             `json:"name" validate:"omitempty,min=2"`
-	Email     string             `json:"email,omitempty" validate:"omitempty,email"`
 	BirthDate string             `json:"birthDate" validate:"omitempty,datetime=2006-01-02"`
 	Address   *UpdateAddressData `json:"address" validate:"omitempty,dive"`
 }
@@ -43,114 +42,118 @@ type Pagination struct {
 
 func CreateUserRoutes(router *gin.Engine) {
 	userRouter := router.Group("/users", middlewares.ValidateToken())
+	userRouter.GET("/", getUsers)
+	userRouter.GET("/:id", getUserById)
+	userRouter.POST("/", createUser)
+	userRouter.PATCH("/:id", updateUserById)
+	userRouter.DELETE("/:id", deleteUserById)
+}
 
-	userRouter.GET("/", func(ctx *gin.Context) {
-		var query Pagination
-		if err := ctx.ShouldBindQuery(&query); err != nil {
-			ctx.Error(err)
-			return
-		}
+func getUsers(ctx *gin.Context) {
+	var query Pagination
+	if err := ctx.ShouldBindQuery(&query); err != nil {
+		ctx.Error(err)
+		return
+	}
 
-		if err := validate.Struct(query); err != nil {
-			ctx.Error(err)
-			return
-		}
+	if err := validate.Struct(query); err != nil {
+		ctx.Error(err)
+		return
+	}
 
-		pagination := usecases.Pagination{
-			Limit:  &query.Limit,
-			Offset: &query.Offset,
-		}
-		users, err := usecases.GetUsers(pagination)
-		if err != nil {
-			ctx.Error(err)
-			return
-		}
-		ctx.JSON(http.StatusOK, users)
-	})
+	pagination := usecases.Pagination{
+		Limit:  &query.Limit,
+		Offset: &query.Offset,
+	}
+	result, err := usecases.GetUsers(pagination)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+	ctx.JSON(http.StatusOK, result)
+}
 
-	userRouter.GET("/:id", func(ctx *gin.Context) {
-		id := ctx.Param("id")
-		user, err := usecases.GetUser(id)
-		if err != nil {
-			ctx.Error(err)
-			return
-		}
-		ctx.JSON(http.StatusOK, user)
-	})
+func getUserById(ctx *gin.Context) {
+	id := ctx.Param("id")
+	user, err := usecases.GetUser(id)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+	ctx.JSON(http.StatusOK, user)
+}
 
-	userRouter.POST("/", func(ctx *gin.Context) {
-		var body CreateUserData
-		if err := ctx.ShouldBindJSON(&body); err != nil {
-			ctx.Error(err)
-			return
-		}
+func createUser(ctx *gin.Context) {
+	var body CreateUserData
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		ctx.Error(err)
+		return
+	}
 
-		if err := validate.Struct(body); err != nil {
-			ctx.Error(err)
-			return
-		}
+	if err := validate.Struct(body); err != nil {
+		ctx.Error(err)
+		return
+	}
 
-		addressData := &usecases.AddressData{
+	addressData := &usecases.AddressData{
+		Street:  body.Address.Street,
+		City:    body.Address.City,
+		State:   body.Address.State,
+		Country: body.Address.Country,
+	}
+	userData := usecases.UserData{
+		Name:      body.Name,
+		Email:     body.Email,
+		BirthDate: body.BirthDate,
+		Address:   addressData,
+	}
+	id, err := usecases.CreateUser(userData)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"id": id})
+}
+
+func updateUserById(ctx *gin.Context) {
+	var body UpdateUserData
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	if err := validate.Struct(body); err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	id := ctx.Param("id")
+	userData := usecases.UserData{
+		Name:      body.Name,
+		BirthDate: body.BirthDate,
+	}
+	if body.Address != nil {
+		userData.Address = &usecases.AddressData{
 			Street:  body.Address.Street,
 			City:    body.Address.City,
 			State:   body.Address.State,
 			Country: body.Address.Country,
 		}
-		userData := usecases.UserData{
-			Name:      body.Name,
-			Email:     body.Email,
-			BirthDate: body.BirthDate,
-			Address:   addressData,
-		}
-		id, err := usecases.CreateUser(userData)
-		if err != nil {
-			ctx.Error(err)
-			return
-		}
-		ctx.JSON(http.StatusOK, gin.H{"id": id})
-	})
+	}
+	err := usecases.UpdateUser(id, userData)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+	ctx.JSON(http.StatusNoContent, gin.H{})
+}
 
-	userRouter.PATCH("/:id", func(ctx *gin.Context) {
-		var body UpdateUserData
-		if err := ctx.ShouldBindJSON(&body); err != nil {
-			ctx.Error(err)
-			return
-		}
-
-		if err := validate.Struct(body); err != nil {
-			ctx.Error(err)
-			return
-		}
-
-		id := ctx.Param("id")
-		userData := usecases.UserData{
-			Name:      body.Name,
-			Email:     body.Email,
-			BirthDate: body.BirthDate,
-		}
-		if body.Address != nil {
-			userData.Address = &usecases.AddressData{
-				Street:  body.Address.Street,
-				City:    body.Address.City,
-				State:   body.Address.State,
-				Country: body.Address.Country,
-			}
-		}
-		err := usecases.UpdateUser(id, userData)
-		if err != nil {
-			ctx.Error(err)
-			return
-		}
-		ctx.JSON(http.StatusNoContent, gin.H{})
-	})
-
-	userRouter.DELETE("/:id", func(ctx *gin.Context) {
-		id := ctx.Param("id")
-		err := usecases.DeleteUser(id)
-		if err != nil {
-			ctx.Error(err)
-			return
-		}
-		ctx.JSON(http.StatusNoContent, gin.H{})
-	})
+func deleteUserById(ctx *gin.Context) {
+	id := ctx.Param("id")
+	err := usecases.DeleteUser(id)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+	ctx.JSON(http.StatusNoContent, gin.H{})
 }
