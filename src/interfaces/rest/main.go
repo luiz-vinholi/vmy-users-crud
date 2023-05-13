@@ -18,10 +18,9 @@ func Run() {
 	router.Use(
 		middlewares.ErrorHandler(
 			map[string]int{
-				"user-not-found":              http.StatusNotFound,
-				"email-in-use":                http.StatusBadRequest,
-				"invalid-credentials":         http.StatusUnauthorized,
-				"invalid-authorization-token": http.StatusUnauthorized,
+				"user-not-found":      http.StatusNotFound,
+				"email-in-use":        http.StatusBadRequest,
+				"invalid-credentials": http.StatusUnauthorized,
 			},
 		),
 	)

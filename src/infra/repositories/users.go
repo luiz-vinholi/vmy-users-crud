@@ -10,10 +10,21 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type UsersRepository struct {
 	client *mongo.Collection
+}
+
+type GetUsersResult struct {
+	Total int64
+	Users []models.User
+}
+
+type Pagination struct {
+	Limit  int
+	Offset int
 }
 
 func NewUsersRepository() *UsersRepository {
@@ -21,11 +32,21 @@ func NewUsersRepository() *UsersRepository {
 	return &UsersRepository{client}
 }
 
-func (ur *UsersRepository) GetUsers() ([]models.User, error) {
+func (ur *UsersRepository) GetUsers(pagination Pagination) (*GetUsersResult, error) {
 	ctx, cancel := getContext()
 	defer cancel()
 
-	cursor, err := ur.client.Find(ctx, bson.M{})
+	filter := bson.M{}
+	total, err := ur.client.CountDocuments(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	opts := options.Find().
+		SetSort(bson.M{"createdDate": -1}).
+		SetSkip(int64(pagination.Offset)).
+		SetLimit(int64(pagination.Limit))
+	cursor, err := ur.client.Find(ctx, filter, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +55,11 @@ func (ur *UsersRepository) GetUsers() ([]models.User, error) {
 	if err := cursor.All(ctx, &users); err != nil {
 		return nil, err
 	}
-	return users, nil
+	result := &GetUsersResult{
+		Total: total,
+		Users: users,
+	}
+	return result, nil
 }
 
 func (ur *UsersRepository) GetUser(id string) (*models.User, error) {

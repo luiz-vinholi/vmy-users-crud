@@ -36,11 +36,31 @@ type UpdateUserData struct {
 	Address   *UpdateAddressData `json:"address" validate:"omitempty,dive"`
 }
 
+type Pagination struct {
+	Limit  int `form:"limit" validate:"omitempty,max=100"`
+	Offset int `form:"offset" validate:"omitempty"`
+}
+
 func CreateUserRoutes(router *gin.Engine) {
 	userRouter := router.Group("/users", middlewares.ValidateToken())
 
 	userRouter.GET("/", func(ctx *gin.Context) {
-		users, err := usecases.GetUsers()
+		var query Pagination
+		if err := ctx.ShouldBindQuery(&query); err != nil {
+			ctx.Error(err)
+			return
+		}
+
+		if err := validate.Struct(query); err != nil {
+			ctx.Error(err)
+			return
+		}
+
+		pagination := usecases.Pagination{
+			Limit:  &query.Limit,
+			Offset: &query.Offset,
+		}
+		users, err := usecases.GetUsers(pagination)
 		if err != nil {
 			ctx.Error(err)
 			return

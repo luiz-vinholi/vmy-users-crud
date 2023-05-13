@@ -25,19 +25,19 @@ func ErrorHandler(codes map[string]int) gin.HandlerFunc {
 		validationErrs, isValidationErrs := err.Err.(validator.ValidationErrors)
 		if isValidationErrs {
 			errors := handleValidationErrors(validationErrs)
-			ctx.JSON(http.StatusBadRequest, gin.H{"errors": errors})
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": errors})
 			return
 		}
 		customErr, isCustomErr := err.Err.(*errors.CustomError)
 		if isCustomErr {
 			for key, value := range codes {
 				if customErr.Code == key {
-					ctx.JSON(value, gin.H{"error": customErr})
+					ctx.AbortWithStatusJSON(value, gin.H{"error": customErr})
 					return
 				}
 			}
 		}
-		ctx.JSON(http.StatusInternalServerError, gin.H{})
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{})
 	}
 }
 

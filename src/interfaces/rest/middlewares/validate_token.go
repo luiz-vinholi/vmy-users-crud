@@ -19,7 +19,7 @@ func ValidateToken() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token := extractTokenFromHeader(ctx)
 		if token == "" {
-			ctx.JSON(
+			ctx.AbortWithStatusJSON(
 				http.StatusUnauthorized,
 				gin.H{"error": "You must provide a JWT token in Authorization header"})
 			return
@@ -28,7 +28,7 @@ func ValidateToken() gin.HandlerFunc {
 		auth := services.NewAuth()
 		data, isValid := auth.ValidateToken(token)
 		if !isValid {
-			ctx.Error(invalidTokenErr)
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": invalidTokenErr})
 			return
 		}
 
@@ -36,18 +36,21 @@ func ValidateToken() gin.HandlerFunc {
 		usersRepo := repositories.NewUsersRepository()
 		user, err := usersRepo.GetUser(userId)
 		if err != nil {
-			ctx.Error(err)
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{})
 			return
 		}
 		if user == nil {
-			ctx.Error(invalidTokenErr)
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": invalidTokenErr})
 			return
 		}
 	}
 }
 
 func extractTokenFromHeader(ctx *gin.Context) (token string) {
-	header := ctx.Request.Header["Authorization"][0]
-	token = strings.Split(header, " ")[1]
+	header := ctx.Request.Header["Authorization"]
+	if header == nil {
+		return
+	}
+	token = strings.Split(header[0], " ")[1]
 	return
 }
