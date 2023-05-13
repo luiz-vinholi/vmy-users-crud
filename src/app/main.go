@@ -1,7 +1,9 @@
 package app
 
-import "vmytest/src/app/users/usecases"
+import (
+	"vmytest/src/app/usecases"
+)
 
 func Load() {
-	usecases.LoadConfigUsers()
+	usecases.Load()
 }

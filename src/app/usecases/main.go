@@ -18,7 +18,7 @@ type UserData struct {
 
 var usersRepo *repositories.UsersRepository
 
-func LoadConfigUsers() {
+func Load() {
 	usersRepo = repositories.NewUsersRepository()
 }
 

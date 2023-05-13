@@ -2,7 +2,8 @@ package rest
 
 import (
 	"net/http"
-	"vmytest/src/app/users/usecases"
+	"vmytest/src/app/usecases"
+	"vmytest/src/interfaces/rest/middlewares"
 
 	"github.com/gin-gonic/gin"
 )
@@ -36,7 +37,7 @@ type UpdateUserData struct {
 }
 
 func CreateUserRoutes(router *gin.Engine) {
-	userRouter := router.Group("/users")
+	userRouter := router.Group("/users", middlewares.ValidateToken())
 
 	userRouter.GET("/", func(ctx *gin.Context) {
 		users, err := usecases.GetUsers()
