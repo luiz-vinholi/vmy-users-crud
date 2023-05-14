@@ -57,11 +57,11 @@
 				
 				<option value="file0">github.com/luiz-vinholi/vmy-users-crud/main.go (0.0%)</option>
 				
-				<option value="file1">github.com/luiz-vinholi/vmy-users-crud/src/infra/services/auth.go (94.7%)</option>
+				<option value="file1">github.com/luiz-vinholi/vmy-users-crud/src/infra/services/auth.go (96.0%)</option>
 				
 				<option value="file2">github.com/luiz-vinholi/vmy-users-crud/src/interfaces/rest/main.go (54.5%)</option>
 				
-				<option value="file3">github.com/luiz-vinholi/vmy-users-crud/src/interfaces/rest/sessions.go (44.8%)</option>
+				<option value="file3">github.com/luiz-vinholi/vmy-users-crud/src/interfaces/rest/sessions.go (86.2%)</option>
 				
 				<option value="file4">github.com/luiz-vinholi/vmy-users-crud/src/interfaces/rest/users.go (90.2%)</option>
 				
@@ -96,6 +96,7 @@ import (
         "os"
 
         "github.com/golang-jwt/jwt/v5"
+        "golang.org/x/crypto/bcrypt"
 )
 
 type Auth struct {
@@ -104,6 +105,19 @@ type Auth struct {
 
 func NewAuth() *Auth <span class="cov8" title="1">{
         return &amp;Auth{saltKey: os.Getenv("JWT_SALT_KEY")}
+}</span>
+
+func (a *Auth) GenerateHash(pass string) (string, error) <span class="cov8" title="1">{
+        hash, err := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
+        if err != nil </span><span class="cov8" title="1">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">return string(hash), nil</span>
+}
+
+func (a *Auth) ValidatePassword(pass string, hash string) bool <span class="cov8" title="1">{
+        err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(pass))
+        return err == nil
 }</span>
 
 func (a *Auth) GenerateToken(data map[string]interface{}) (token string, err error) <span class="cov8" title="1">{
@@ -118,7 +132,7 @@ func (a *Auth) GenerateToken(data map[string]interface{}) (token string, err err
 
 func (a *Auth) ValidateToken(token string) (data map[string]interface{}, isValid bool) <span class="cov8" title="1">{
         claims := jwt.MapClaims{}
-        t, err := jwt.ParseWithClaims(token, claims, a.getKeyFunc())
+        t, err := jwt.ParseWithClaims(token, claims, a.getTokenKeyFunc())
         if err != nil </span><span class="cov8" title="1">{
                 return nil, false
         }</span>
@@ -132,7 +146,7 @@ func (a *Auth) ValidateToken(token string) (data map[string]interface{}, isValid
         <span class="cov8" title="1">return data, true</span>
 }
 
-func (a *Auth) getKeyFunc() jwt.Keyfunc <span class="cov8" title="1">{
+func (a *Auth) getTokenKeyFunc() jwt.Keyfunc <span class="cov8" title="1">{
         return func(token *jwt.Token) (interface{}, error) </span><span class="cov8" title="1">{
                 return []byte(a.saltKey), nil
         }</span>
@@ -204,28 +218,28 @@ func CreateSessionRoutes(router *gin.Engine) <span class="cov8" title="1">{
         sessionRouter.PUT("/users/:id/passwords", setSessionUserPassword)
 }</span>
 
-func createSession(ctx *gin.Context) <span class="cov0" title="0">{
+func createSession(ctx *gin.Context) <span class="cov8" title="1">{
         var body Session
         if err := ctx.ShouldBindJSON(&amp;body); err != nil </span><span class="cov0" title="0">{
                 ctx.Error(err)
                 return
         }</span>
 
-        <span class="cov0" title="0">if err := validate.Struct(body); err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err := validate.Struct(body); err != nil </span><span class="cov8" title="1">{
                 ctx.Error(err)
                 return
         }</span>
 
-        <span class="cov0" title="0">session := usecases.Session{
+        <span class="cov8" title="1">session := usecases.Session{
                 Email:    body.Email,
                 Password: body.Password,
         }
         token, err := usecases.CreateSession(session)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 ctx.Error(err)
                 return
         }</span>
-        <span class="cov0" title="0">ctx.JSON(http.StatusOK, gin.H{"token": token})</span>
+        <span class="cov8" title="1">ctx.JSON(http.StatusOK, gin.H{"token": token})</span>
 }
 
 func setSessionUserPassword(ctx *gin.Context) <span class="cov8" title="1">{
@@ -246,7 +260,7 @@ func setSessionUserPassword(ctx *gin.Context) <span class="cov8" title="1">{
                 ctx.Error(err)
                 return
         }</span>
-        <span class="cov0" title="0">ctx.JSON(http.StatusNoContent, gin.H{})</span>
+        <span class="cov8" title="1">ctx.JSON(http.StatusNoContent, gin.H{})</span>
 }
 </pre>
 		

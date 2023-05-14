@@ -3,8 +3,6 @@ package usecases
 import (
 	"github.com/luiz-vinholi/vmy-users-crud/src/app/errors"
 	"github.com/luiz-vinholi/vmy-users-crud/src/infra/services"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 type Session struct {
@@ -25,11 +23,13 @@ func CreateSession(session Session) (token string, err error) {
 		err = errors.InvalidCredentials()
 		return
 	}
-	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(session.Password)); err != nil {
+
+	passHashed := user.Password
+	auth := services.NewAuth()
+	if isValid := auth.ValidatePassword(session.Password, passHashed); !isValid {
 		err = errors.InvalidCredentials()
 		return
 	}
-	auth := services.NewAuth()
 	payload := map[string]interface{}{"id": user.Id.Hex()}
 	token, err = auth.GenerateToken(payload)
 	return

@@ -1,13 +1,19 @@
 package usecases
 
 import (
+	"github.com/luiz-vinholi/vmy-users-crud/src/app/errors"
 	"github.com/luiz-vinholi/vmy-users-crud/src/infra/models"
-
-	"golang.org/x/crypto/bcrypt"
+	"github.com/luiz-vinholi/vmy-users-crud/src/infra/services"
 )
 
 func SetSessionPassword(userId string, pass string) (err error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
+	isExists, _ := checkIfUserExists(userId)
+	if !isExists {
+		err = errors.UserNotFound()
+		return
+	}
+	auth := services.NewAuth()
+	hash, err := auth.GenerateHash(pass)
 	if err != nil {
 		return
 	}

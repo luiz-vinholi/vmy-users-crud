@@ -2,11 +2,61 @@ package services
 
 import (
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/crypto/bcrypt"
 )
+
+func TestAuthValidatePassword(t *testing.T) {
+	assert := assert.New(t)
+
+	pass := "Han Solo"
+	hash := generateHash(pass)
+
+	auth := NewAuth()
+	isValid := auth.ValidatePassword(pass, hash)
+
+	assert.True(isValid)
+}
+
+func TestAuthValidatePasswordInvalid(t *testing.T) {
+	assert := assert.New(t)
+
+	pass := "Han Solo"
+	hash := "Leia Organa"
+
+	auth := NewAuth()
+	isValid := auth.ValidatePassword(pass, hash)
+
+	assert.False(isValid)
+}
+
+func TestAuthGenerateHash(t *testing.T) {
+	assert := assert.New(t)
+
+	pass := "Qui-gon Jinn"
+	auth := NewAuth()
+	hash, err := auth.GenerateHash(pass)
+
+	isValid := validatePass(pass, hash)
+
+	assert.Nil(err)
+	assert.True(isValid)
+}
+
+func TestAuthGenerateHashInvalid(t *testing.T) {
+	assert := assert.New(t)
+
+	pass := strings.Repeat("X", 73)
+	auth := NewAuth()
+	hash, err := auth.GenerateHash(pass)
+
+	assert.NotNil(err)
+	assert.Equal("", hash)
+}
 
 func TestAuthGenerateToken(t *testing.T) {
 	assert := assert.New(t)
@@ -60,4 +110,14 @@ func generateToken(key string) (string, error) {
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	token, err := jwtToken.SignedString([]byte(key))
 	return token, err
+}
+
+func generateHash(pass string) string {
+	hash, _ := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
+	return string(hash)
+}
+
+func validatePass(pass string, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(pass))
+	return err == nil
 }
