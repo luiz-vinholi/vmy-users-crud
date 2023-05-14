@@ -5,15 +5,16 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"vmytest/src/interfaces/rest/middlewares"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/luiz-vinholi/vmy-users-crud/src/interfaces/rest/middlewares"
 )
 
 var validate *validator.Validate
 
 func setupRouter() *gin.Engine {
+	validate = validator.New()
 	router := gin.Default()
 	router.Use(
 		middlewares.ErrorHandler(
@@ -29,10 +30,10 @@ func setupRouter() *gin.Engine {
 	return router
 }
 
-func Run() {
-	validate = validator.New()
+func Run() *gin.Engine {
 	router := setupRouter()
 	port := fmt.Sprintf(":%s", os.Getenv("PORT"))
 	log.Printf("Listening on port %s", port)
 	router.Run(port)
+	return router
 }

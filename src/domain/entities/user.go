@@ -3,10 +3,10 @@ package entities
 import "time"
 
 type Address struct {
-	Street  string `bson:"street,omitempty"`
-	City    string `bson:"city,omitempty"`
-	State   string `bson:"state,omitempty"`
-	Country string `bson:"country,omitempty"`
+	Street  string `json:"street,omitempty"`
+	City    string `json:"city,omitempty"`
+	State   string `json:"state,omitempty"`
+	Country string `json:"country,omitempty"`
 }
 
 type User struct {

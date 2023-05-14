@@ -2,9 +2,9 @@ package rest
 
 import (
 	"net/http"
-	"vmytest/src/app/usecases"
 
 	"github.com/gin-gonic/gin"
+	"github.com/luiz-vinholi/vmy-users-crud/src/app/usecases"
 )
 
 type Session struct {

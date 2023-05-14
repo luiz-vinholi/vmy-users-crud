@@ -2,10 +2,10 @@ package rest
 
 import (
 	"net/http"
-	"vmytest/src/app/usecases"
-	"vmytest/src/interfaces/rest/middlewares"
 
 	"github.com/gin-gonic/gin"
+	"github.com/luiz-vinholi/vmy-users-crud/src/app/usecases"
+	"github.com/luiz-vinholi/vmy-users-crud/src/interfaces/rest/middlewares"
 )
 
 type CreateAdressData struct {
@@ -52,10 +52,9 @@ func CreateUserRoutes(router *gin.Engine) {
 func getUsers(ctx *gin.Context) {
 	var query Pagination
 	if err := ctx.ShouldBindQuery(&query); err != nil {
-		ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
 	if err := validate.Struct(query); err != nil {
 		ctx.Error(err)
 		return

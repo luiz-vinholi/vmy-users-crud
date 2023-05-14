@@ -1,7 +1,7 @@
 package usecases
 
 import (
-	"vmytest/src/infra/models"
+	"github.com/luiz-vinholi/vmy-users-crud/src/infra/models"
 
 	"golang.org/x/crypto/bcrypt"
 )

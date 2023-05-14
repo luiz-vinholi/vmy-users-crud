@@ -2,7 +2,8 @@ package middlewares
 
 import (
 	"net/http"
-	"vmytest/src/app/errors"
+
+	"github.com/luiz-vinholi/vmy-users-crud/src/app/errors"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"

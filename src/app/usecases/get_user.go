@@ -1,15 +1,12 @@
 package usecases
 
 import (
-	"vmytest/src/app/errors"
-	"vmytest/src/domain/entities"
+	"github.com/luiz-vinholi/vmy-users-crud/src/app/errors"
+	"github.com/luiz-vinholi/vmy-users-crud/src/domain/entities"
 )
 
 func GetUser(id string) (*entities.User, error) {
-	user, err := usersRepo.GetUser(id)
-	if err != nil {
-		return nil, err
-	}
+	user, _ := usersRepo.GetUser(id)
 	if user == nil {
 		return nil, errors.UserNotFound()
 	}

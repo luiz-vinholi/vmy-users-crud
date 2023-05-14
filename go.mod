@@ -1,10 +1,11 @@
-module vmytest
+module github.com/luiz-vinholi/vmy-users-crud
 
 go 1.20
 
 require (
 	github.com/acobaugh/osrelease v0.0.0-20181218015638-a93a0a55a249 // indirect
 	github.com/benweissmann/memongo v0.1.1 // indirect
+	github.com/bxcodec/faker/v3 v3.8.1 // indirect
 	github.com/bytedance/sonic v1.8.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/chidiwilliams/flatbson v0.3.0 // indirect
@@ -54,6 +55,7 @@ require (
 	go.mongodb.org/mongo-driver v1.11.6 // indirect
 	golang.org/x/arch v0.0.0-20210923205945-b76863e36670 // indirect
 	golang.org/x/crypto v0.9.0 // indirect
+	golang.org/x/exp v0.0.0-20230510235704-dd950f8aeaea // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.8.0 // indirect

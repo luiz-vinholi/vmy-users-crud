@@ -1,8 +1,8 @@
 package usecases
 
 import (
-	"vmytest/src/app/errors"
-	"vmytest/src/infra/models"
+	"github.com/luiz-vinholi/vmy-users-crud/src/app/errors"
+	"github.com/luiz-vinholi/vmy-users-crud/src/infra/models"
 )
 
 func UpdateUser(id string, userData UserData) (err error) {

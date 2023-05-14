@@ -3,11 +3,11 @@ package middlewares
 import (
 	"net/http"
 	"strings"
-	"vmytest/src/app/errors"
-	"vmytest/src/infra/repositories"
-	"vmytest/src/infra/services"
 
 	"github.com/gin-gonic/gin"
+	"github.com/luiz-vinholi/vmy-users-crud/src/app/errors"
+	"github.com/luiz-vinholi/vmy-users-crud/src/infra/repositories"
+	"github.com/luiz-vinholi/vmy-users-crud/src/infra/services"
 )
 
 var invalidTokenErr = &errors.CustomError{

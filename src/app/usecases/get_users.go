@@ -1,8 +1,8 @@
 package usecases
 
 import (
-	"vmytest/src/domain/entities"
-	"vmytest/src/infra/repositories"
+	"github.com/luiz-vinholi/vmy-users-crud/src/domain/entities"
+	"github.com/luiz-vinholi/vmy-users-crud/src/infra/repositories"
 )
 
 type GetUsersResult struct {

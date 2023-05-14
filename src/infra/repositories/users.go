@@ -3,10 +3,10 @@ package repositories
 import (
 	"context"
 	"time"
-	"vmytest/src/infra/databases"
-	"vmytest/src/infra/models"
 
 	"github.com/chidiwilliams/flatbson"
+	"github.com/luiz-vinholi/vmy-users-crud/src/infra/databases"
+	"github.com/luiz-vinholi/vmy-users-crud/src/infra/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"

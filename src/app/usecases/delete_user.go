@@ -1,6 +1,6 @@
 package usecases
 
-import "vmytest/src/app/errors"
+import "github.com/luiz-vinholi/vmy-users-crud/src/app/errors"
 
 func DeleteUser(id string) (err error) {
 	isExists, _ := checkIfUserExists(id)

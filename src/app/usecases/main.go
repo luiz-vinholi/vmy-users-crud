@@ -1,6 +1,6 @@
 package usecases
 
-import "vmytest/src/infra/repositories"
+import "github.com/luiz-vinholi/vmy-users-crud/src/infra/repositories"
 
 type AddressData struct {
 	Street  string
