@@ -1,5 +1,7 @@
 # VMY Users Crud
-Aplicação de CRUD de usuários, desenvolvido em Golang 1.20 e MongoDB.
+Aplicação de CRUD de usuários, desenvolvido em Golang 1.20 e MongoDB.  
+Foram realizados testes de integração em todas as rotas e alguns testes unitários em arquivos pontais,
+cobrindo a maioria dos casos.
 
 ### Design Tático (organização de pastas)
 Foi utilizado conceitos do Domain Driven Design (DDD) para a organização do projeto.  
