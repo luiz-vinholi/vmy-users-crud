@@ -39,4 +39,76 @@ Abra o arquivo gerado ```cover.html``` no navegador para checar a cobertura.
 # Endpoints
 Arquivo para importar os endpoints no Postman [aqui](postman-collection.json).
 
-### POST ```/users/```
+### POST ```/sessions```
+Cria uma sessão (login) e retorna o token de acesso para as rotas de usuário.  
+
+**Body:**
+```
+{
+    "email": "user@initial.com",
+    "password": "123456"
+}
+```
+
+### PUT ```/sessions/users/:id/passwords```
+Atualiza o usuário inserindo uma senha para inicio de sessão.
+Utilizada após a criação de usuário, essa rota seta uma senha para o usuário.  
+
+**Body:**
+```
+{
+    "password": "123456"
+}
+```
+OBS.: O ideal é esse endpoint não utilizar o id do usuário, e sim um código aleatório com data de validade
+sendo enviado por email após a criação do usuário. Porém, não foi possível implementar disparo de email.
+
+### GET ```/users/:id```
+Obtém usuário a partir do seu ID.
+*É necessário enviar o token gerado em ```POST /sessions``` como Bearer Token.
+
+### GET ```/users```
+Obtém usuários. Possuí paginação.
+*É necessário enviar o token gerado em ```POST /sessions``` como Bearer Token.  
+
+**Querystring:**
+```
+limit= number opcional
+offset= number opcional
+```
+
+### POST ```/users```
+Cria usuário.
+*É necessário enviar o token gerado em ```POST /sessions``` como Bearer Token.
+
+**Body:**
+```
+{
+    "name": "Nome Usuário",
+    "email": "email@email.com",
+    "birthDate": "2000-08-26",
+    "address": {
+        "street": "Rua quinta, 80",
+        "city": "São Paulo",
+        "state": "São Paulo",
+        "country": "Brasil"
+    }
+}
+```
+
+### PATCH ```/users/:id```
+Atualiza usuário a partir de seu ID.
+*É necessário enviar o token gerado em ```POST /sessions``` como Bearer Token.  
+
+**Body:**
+```
+{
+    "name": "Nome Usuário"
+}
+```
+
+### DELETE ```/users/:id```
+Deleta usuário a partir de seu ID.
+*É necessário enviar o token gerado em ```POST /sessions``` como Bearer Token.  
+
+OBS.: É possível deletar o próprio usuário.
