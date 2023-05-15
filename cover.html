@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>vmy-users-crud: Go Coverage Report</title>
+		<title>entities: Go Coverage Report</title>
 		<style>
 			body {
 				background: black;
@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/luiz-vinholi/vmy-users-crud/main.go (0.0%)</option>
+				<option value="file0">github.com/luiz-vinholi/vmy-users-crud/src/domain/entities/user.go (100.0%)</option>
 				
 				<option value="file1">github.com/luiz-vinholi/vmy-users-crud/src/infra/services/auth.go (96.0%)</option>
 				
@@ -77,17 +77,42 @@
 		</div>
 		<div id="content">
 		
-		<pre class="file" id="file0" style="display: none">package main
+		<pre class="file" id="file0" style="display: none">package entities
 
-import (
-        "github.com/luiz-vinholi/vmy-users-crud/src"
-        "github.com/luiz-vinholi/vmy-users-crud/src/interfaces/rest"
-)
+import "time"
 
-func main() <span class="cov0" title="0">{
-        src.Init()
-        rest.Run()
-}</span>
+type Address struct {
+        Street  string `json:"street,omitempty"`
+        City    string `json:"city,omitempty"`
+        State   string `json:"state,omitempty"`
+        Country string `json:"country,omitempty"`
+}
+
+type User struct {
+        Id        string   `json:"id,omitempty"`
+        Name      string   `json:"name,omitempty"`
+        Email     string   `json:"email,omitempty"`
+        Password  string   `json:"password,omitempty"`
+        BirthDate string   `json:"birthDate,omitempty"`
+        Age       int      `json:"age,omitempty"`
+        Address   *Address `json:"address,omitempty"`
+}
+
+// This is a method defined on the `User` struct that sets the `Age` field of the user based on their
+// `BirthDate`. Calculate the difference between the current date and the user's birth date in years,
+// and then sets the `Age` field to that value. If there is an error parsing the `BirthDate`, it returns the error.
+func (u *User) SetAge() (err error) <span class="cov8" title="1">{
+        today := time.Now()
+        pattern := "2006-01-02"
+        birthDate, err := time.Parse(pattern, u.BirthDate)
+        if err != nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+        <span class="cov8" title="1">yearInHours := 8760
+        age := today.Sub(birthDate).Hours() / float64(yearInHours)
+        u.Age = int(age)
+        return</span>
+}
 </pre>
 		
 		<pre class="file" id="file1" style="display: none">package services
@@ -107,6 +132,10 @@ func NewAuth() *Auth <span class="cov8" title="1">{
         return &amp;Auth{saltKey: os.Getenv("JWT_SALT_KEY")}
 }</span>
 
+// This function is generating a hash from a given password using the bcrypt algorithm. It takes a
+// string password as input and returns a string hash and an error. If the hash generation is
+// successful, the function returns the hash as a string. If there is an error, it returns an empty
+// string and the error.
 func (a *Auth) GenerateHash(pass string) (string, error) <span class="cov8" title="1">{
         hash, err := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
         if err != nil </span><span class="cov8" title="1">{
@@ -115,11 +144,18 @@ func (a *Auth) GenerateHash(pass string) (string, error) <span class="cov8" titl
         <span class="cov8" title="1">return string(hash), nil</span>
 }
 
+// This function is validating a given password against a hash using the bcrypt algorithm. It takes a
+// string password and a string hash as input and returns a boolean value indicating whether the
+// password matches the hash or not. If the password matches the hash, the function returns true,
+// otherwise it returns false.
 func (a *Auth) ValidatePassword(pass string, hash string) bool <span class="cov8" title="1">{
         err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(pass))
         return err == nil
 }</span>
 
+// This function is generating a JWT (JSON Web Token) using the HMAC-SHA256 algorithm. It signs the token using
+// the salt key stored in the Auth struct and returns the signed token and any error that occurred
+// during the process.
 func (a *Auth) GenerateToken(data map[string]interface{}) (token string, err error) <span class="cov8" title="1">{
         claims := jwt.MapClaims{}
         for key, value := range data </span><span class="cov8" title="1">{
@@ -130,6 +166,10 @@ func (a *Auth) GenerateToken(data map[string]interface{}) (token string, err err
         return</span>
 }
 
+// This function is validating a JWT (JSON Web Token) using the HMAC-SHA256 algorithm. It takes a
+// string token as input and returns a map of string keys and interface{} values representing the data
+// included in the token's payload, as well as a boolean value indicating whether the token is valid or
+// not.
 func (a *Auth) ValidateToken(token string) (data map[string]interface{}, isValid bool) <span class="cov8" title="1">{
         claims := jwt.MapClaims{}
         t, err := jwt.ParseWithClaims(token, claims, a.getTokenKeyFunc())
@@ -221,7 +261,7 @@ func CreateSessionRoutes(router *gin.Engine) <span class="cov8" title="1">{
 func createSession(ctx *gin.Context) <span class="cov8" title="1">{
         var body Session
         if err := ctx.ShouldBindJSON(&amp;body); err != nil </span><span class="cov0" title="0">{
-                ctx.Error(err)
+                ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
                 return
         }</span>
 
@@ -245,7 +285,7 @@ func createSession(ctx *gin.Context) <span class="cov8" title="1">{
 func setSessionUserPassword(ctx *gin.Context) <span class="cov8" title="1">{
         var body Password
         if err := ctx.ShouldBindJSON(&amp;body); err != nil </span><span class="cov0" title="0">{
-                ctx.Error(err)
+                ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
                 return
         }</span>
 
@@ -351,7 +391,7 @@ func getUserById(ctx *gin.Context) <span class="cov8" title="1">{
 func createUser(ctx *gin.Context) <span class="cov8" title="1">{
         var body CreateUserData
         if err := ctx.ShouldBindJSON(&amp;body); err != nil </span><span class="cov0" title="0">{
-                ctx.Error(err)
+                ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
                 return
         }</span>
 
@@ -383,7 +423,7 @@ func createUser(ctx *gin.Context) <span class="cov8" title="1">{
 func updateUserById(ctx *gin.Context) <span class="cov8" title="1">{
         var body UpdateUserData
         if err := ctx.ShouldBindJSON(&amp;body); err != nil </span><span class="cov0" title="0">{
-                ctx.Error(err)
+                ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
                 return
         }</span>
 

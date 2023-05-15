@@ -25,7 +25,7 @@ func CreateSessionRoutes(router *gin.Engine) {
 func createSession(ctx *gin.Context) {
 	var body Session
 	if err := ctx.ShouldBindJSON(&body); err != nil {
-		ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -49,7 +49,7 @@ func createSession(ctx *gin.Context) {
 func setSessionUserPassword(ctx *gin.Context) {
 	var body Password
 	if err := ctx.ShouldBindJSON(&body); err != nil {
-		ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 

@@ -85,7 +85,7 @@ func getUserById(ctx *gin.Context) {
 func createUser(ctx *gin.Context) {
 	var body CreateUserData
 	if err := ctx.ShouldBindJSON(&body); err != nil {
-		ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -117,7 +117,7 @@ func createUser(ctx *gin.Context) {
 func updateUserById(ctx *gin.Context) {
 	var body UpdateUserData
 	if err := ctx.ShouldBindJSON(&body); err != nil {
-		ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
