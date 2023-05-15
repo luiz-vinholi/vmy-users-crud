@@ -5,6 +5,7 @@ import (
 	"github.com/luiz-vinholi/vmy-users-crud/src/infra/models"
 )
 
+// This function updates a user if they exist in the repository, otherwise it returns an error.
 func UpdateUser(id string, userData UserData) (err error) {
 	isExists, _ := checkIfUserExists(id)
 	if !isExists {

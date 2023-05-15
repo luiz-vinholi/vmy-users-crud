@@ -5,6 +5,8 @@ import (
 	"github.com/luiz-vinholi/vmy-users-crud/src/infra/models"
 )
 
+// The function creates a new user with the given user data and checks if the email already exists in
+// the database.
 func CreateUser(userData UserData) (id string, err error) {
 	isExists, err := checkIfEmailExists(userData.Email)
 	if err != nil {

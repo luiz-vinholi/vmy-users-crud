@@ -10,8 +10,11 @@ services:
     image: mongo
     ports:
       - '27017:27017'
+    environment:
+      - MONGO_INITDB_DATABASE=vmytest
     volumes:
       - data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
 volumes:
   data:
 networks:

@@ -15,6 +15,7 @@ type Pagination struct {
 	Offset *int
 }
 
+// The function retrieves a list of users with pagination and total of users.
 func GetUsers(pagination Pagination) (*GetUsersResult, error) {
 	pag := handlePagination(pagination)
 	result, err := usersRepo.GetUsers(pag)

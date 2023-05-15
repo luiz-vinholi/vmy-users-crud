@@ -5,6 +5,7 @@ import (
 	"github.com/luiz-vinholi/vmy-users-crud/src/domain/entities"
 )
 
+// The function retrieves a user, returning it or an error if not found.
 func GetUser(id string) (*entities.User, error) {
 	user, _ := usersRepo.GetUser(id)
 	if user == nil {

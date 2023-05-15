@@ -142,10 +142,8 @@ func TestGetUsersWithPaginationIntegration(t *testing.T) {
 	userId2 := insertUserInDB(client)
 	userId3 := insertUserInDB(client)
 	userId4 := insertUserInDB(client)
-	defer deleteUserInDB(client, userId)
-	defer deleteUserInDB(client, userId2)
-	defer deleteUserInDB(client, userId3)
-	defer deleteUserInDB(client, userId4)
+	userIds := []string{userId, userId2, userId3, userId4}
+	defer deleteUsersInDB(client, userIds)
 
 	auth := services.NewAuth()
 	token, _ := auth.GenerateToken(map[string]interface{}{"id": userId})
@@ -242,12 +240,12 @@ func TestCreateUserIntegration(t *testing.T) {
 		"name": "Test User",
 		"email": "test.create.user@example.com",
 		"birthDate": "1980-06-21",
-    "address": {
+		"address": {
 			"street": "Rua do Teste, 550 - Integração",
 			"city": "Mandaguari",
 			"state": "Paraná",
 			"country": "Brasil" 
-    }
+		}
 	}`
 	req, _ := http.NewRequest("POST", "/users/", strings.NewReader(payload))
 	req.Header.Set("Authorization", "Bearer "+token)

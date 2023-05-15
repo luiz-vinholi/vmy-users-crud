@@ -32,6 +32,11 @@ func NewUsersRepository() *UsersRepository {
 	return &UsersRepository{client}
 }
 
+// This a method of the `UsersRepository` struct that retrieves a list of users
+// from the MongoDB database. It takes a `Pagination` struct as a parameter, which contains the `Limit`
+// and `Offset` values for the query. The `Limit` param limits the maximum number of returned users.
+// `Offset` param determines the number of users to skip from the beginning of the returned data before
+// rendering the results.
 func (ur *UsersRepository) GetUsers(pagination Pagination) (*GetUsersResult, error) {
 	ctx, cancel := getContext()
 	defer cancel()
@@ -62,6 +67,10 @@ func (ur *UsersRepository) GetUsers(pagination Pagination) (*GetUsersResult, err
 	return result, nil
 }
 
+// This function is a method of the `UsersRepository` struct that retrieves a user from the MongoDB
+// database by their user `id`. Retrieve the user from the database. If an error occurs during the
+// conversion or retrieval, it returns `nil` and the error. Otherwise, it returns `models.User` and
+// `nil` for the error.
 func (ur *UsersRepository) GetUser(id string) (*models.User, error) {
 	objId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -72,12 +81,20 @@ func (ur *UsersRepository) GetUser(id string) (*models.User, error) {
 	return user, err
 }
 
+// Is a method of the `UsersRepository` struct that retrieves a user from the MongoDB database by their user email address.
+// Retrieve the user from the database. If an error occurs during the retrieval, it returns `nil` and the error. Otherwise,
+// it returns a `models.User` and `nil` for the error.
 func (ur *UsersRepository) GetUserByEmail(email string) (*models.User, error) {
 	filter := bson.M{"email": email}
 	user, err := ur.getUser(filter)
 	return user, err
 }
 
+// This function is a method of the `UsersRepository` struct that creates a new user in the MongoDB
+// database. It takes a `models.User` struct as a parameter, sets the `CreatedDate` field to the
+// current time, and inserts the data into the `users` collection If an error occurs during the insertion,
+// it returns an empty string and the error. Otherwise, it returns the `id` of the inserted document as
+// a hexadecimal string and `nil` for the error.
 func (ur *UsersRepository) CreateUser(data models.User) (id string, err error) {
 	ctx, cancel := getContext()
 	defer cancel()
@@ -90,6 +107,8 @@ func (ur *UsersRepository) CreateUser(data models.User) (id string, err error) {
 	return result.InsertedID.(primitive.ObjectID).Hex(), nil
 }
 
+// This is a method of the `UsersRepository` struct that updates a user by id in the MongoDB database.
+// If an error occurs during update, it returns a error. Otherwise, it returns nil.
 func (ur *UsersRepository) UpdateUser(id string, data models.User) (err error) {
 	ctx, cancel := getContext()
 	defer cancel()
@@ -111,6 +130,8 @@ func (ur *UsersRepository) UpdateUser(id string, data models.User) (err error) {
 	return
 }
 
+// This is a method of the `UsersRepository` struct that deletes a user from the MongoDB database by
+// their user `id`. If an error occurs during the deletion, it returns the error. Otherwise, it returns `nil`.
 func (ur *UsersRepository) DeleteUser(id string) (err error) {
 	ctx, cancel := getContext()
 	defer cancel()

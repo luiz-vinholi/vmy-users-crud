@@ -10,6 +10,7 @@ type Session struct {
 	Password string
 }
 
+// The function creates a session by validating user credentials and generating and returning a token.
 func CreateSession(session Session) (token string, err error) {
 	user, err := usersRepo.GetUserByEmail(session.Email)
 	if err != nil {

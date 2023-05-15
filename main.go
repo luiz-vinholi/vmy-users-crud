@@ -6,6 +6,10 @@ import (
 )
 
 func main() {
+	Run()
+}
+
+func Run() {
 	src.Init()
 	rest.Run()
 }

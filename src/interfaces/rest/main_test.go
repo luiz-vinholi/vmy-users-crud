@@ -83,6 +83,12 @@ func deleteUserInDB(client *mongo.Collection, id string) {
 	client.DeleteOne(context.TODO(), filter)
 }
 
+func deleteUsersInDB(client *mongo.Collection, ids []string) {
+	for _, id := range ids {
+		go deleteUserInDB(client, id)
+	}
+}
+
 func parseBodyString(bodyStr string) map[string]interface{} {
 	var body map[string]interface{}
 	err := json.Unmarshal([]byte(bodyStr), &body)
