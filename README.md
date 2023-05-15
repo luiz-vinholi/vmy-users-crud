@@ -1,4 +1,13 @@
-# Para Executar
+# VMY Users Crud
+Aplicação de CRUD de usuários, desenvolvido em Golang 1.20 e MongoDB.
+
+### Design Tático (organização de pastas)
+Foi utilizado conceitos do Domain Driven Design (DDD) para a organização do projeto.  
+Segue abaixo um diagrama que construi para representar o design tático utilizado:
+  
+![diagrama de fluxo](./tactical-design.png)
+
+## Para Executar
 Antes de mais nada, crie um arquivo chamado ```.env``` na raiz do projeto com o seguinte formato:
 ```
 PORT=8888
@@ -27,3 +36,7 @@ go tool cover -html=cover.out -o cover.html
 ```
 Abra o arquivo gerado ```cover.html``` no navegador para checar a cobertura.
 
+# Endpoints
+Arquivo para importar os endpoints no Postman [aqui](postman-collection.json).
+
+### POST ```/users/```
