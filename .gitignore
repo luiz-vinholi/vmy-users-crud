@@ -4,6 +4,9 @@
 # env
 .env
 
+# vscode
+.vscode
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
