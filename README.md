@@ -66,11 +66,11 @@ OBS.: O ideal é esse endpoint não utilizar o id do usuário, e sim um código 
 sendo enviado por email após a criação do usuário. Porém, não foi possível implementar disparo de email.
 
 ### GET ```/users/:id```
-Obtém usuário a partir do seu ID.
+Obtém usuário a partir do seu ID.   
 *É necessário enviar o token gerado em ```POST /sessions``` como Bearer Token.
 
 ### GET ```/users```
-Obtém usuários. Possuí paginação.
+Obtém usuários. Possuí paginação.   
 *É necessário enviar o token gerado em ```POST /sessions``` como Bearer Token.  
 
 **Querystring:**
@@ -80,7 +80,7 @@ offset= number opcional
 ```
 
 ### POST ```/users```
-Cria usuário.
+Cria usuário.   
 *É necessário enviar o token gerado em ```POST /sessions``` como Bearer Token.
 
 **Body:**
@@ -99,7 +99,7 @@ Cria usuário.
 ```
 
 ### PATCH ```/users/:id```
-Atualiza usuário a partir de seu ID.
+Atualiza usuário a partir de seu ID.   
 *É necessário enviar o token gerado em ```POST /sessions``` como Bearer Token.  
 
 **Body:**
